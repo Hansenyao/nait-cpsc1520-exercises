@@ -12,14 +12,15 @@
     // update current budget total
     // reset the values
     // focus back at the title
-document.querySelector("#budget-form").addEventListener("submit", (event)=>{
+let budgetForm = document.querySelector("#budget-form");
+budgetForm.addEventListener("submit", (event)=>{
     event.preventDefault();
     
-    let title = document.querySelector("#budget-item").value;
-    let amount = document.querySelector("#budget-item-amount").value;
-    let description = document.querySelector("#budget-item-description").value;
+    let title = budgetForm.elements["budget-title"].value;//document.querySelector("#budget-item").value;
+    let amount = budgetForm.amount.value;//document.querySelector("#budget-item-amount").value;
+    let description = budgetForm.elements["budget-description"].value;//document.querySelector("#budget-item-description").value;
     if (isEmptyString(title) || isEmptyString(amount) || isEmptyString(description)) {
-        alert("Contnt must be not null.");
+        alert("Content must be not null.");
         return;
     }
     if (!isGreaterThan5(parseFloat(amount))) {
@@ -32,6 +33,10 @@ document.querySelector("#budget-form").addEventListener("submit", (event)=>{
 
     // Update the total budget
     updateTotal(parseFloat(amount));
+
+    // Reset
+    event.target.reset();
+    budgetForm.elements["budget-title"].focus();
 });
 
 
@@ -43,10 +48,14 @@ document.querySelector("#budget-form").addEventListener("submit", (event)=>{
 */
 const createItem = (title, amount, description) => {
     let elem = document.querySelector(".current-budget");
+    // Way 1:
+    //elem.innerHTML += `<li class=\"list-group-item list-group-item-action\" aria-current=\"true\"> ${title} (${amount}) - ${description}</li>`
+    
+    // Way 2:
     let newElem = document.createElement("li");
     newElem.classList.add("list-group-item");
     newElem.classList.add("list-group-item-action");
-    newElem.attributes.ariaCurrent = true;
+    newElem.ariaCurrent = "true";
     newElem.innerText = `${title} (${amount}) - ${description}`;
     elem.appendChild(newElem);
 }
@@ -63,7 +72,6 @@ document.querySelector(".current-budget").addEventListener("mouseover", (event) 
     event.target.classList.add("active");
 });
 
-
 // remove active class from list item on mouseout.
 document.querySelector(".current-budget").addEventListener("mouseout", (event) => {
     event.target.classList.remove("active");
@@ -71,7 +79,7 @@ document.querySelector(".current-budget").addEventListener("mouseout", (event) =
 
 // Validate a string is null or whitespace or not
 const isEmptyString = (str) => {
-    return (!str || str == "" || str.trim() == "") ? true : false;
+    return (!str || str.trim() == "") ? true : false;
 }
 
 // Validate a number is greater than 5 or not
